@@ -1,0 +1,10 @@
+.idea/
+target/
+*.iml
+.DS_Store
+logs/
+application-local.properties
+application-dev.properties
+firebase-service-account.json  # Hassas bilgileri içerdiği için
+/ecommerce-uploads/
+/src/main/resources/firebase-service-account.json
