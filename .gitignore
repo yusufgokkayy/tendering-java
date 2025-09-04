@@ -1,10 +1,128 @@
-.idea/
+### Java & Spring Boot ###
 target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+### STS (Spring Tool Suite) ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
 *.iml
-.DS_Store
+*.ipr
+out/
+.idea_modules/
+
+### VS Code ###
+.vscode/
+*.code-workspace
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Maven ###
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+### Gradle ###
+.gradle
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+### Log files ###
 logs/
+*.log
+log/
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### OS specific files ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+### Docker ###
+.env
+docker-compose.override.yml
+
+### Node & Frontend ###
+node_modules/
+dist/
+bower_components/
+.npm/
+.eslintcache
+
+### Application specific ###
+# Config files with sensitive info
 application-local.properties
 application-dev.properties
-firebase-service-account.json  # Hassas bilgileri içerdiği için
+application-prod.properties
+application-*.properties
+application-*.yml
+!application.properties
+!application.yml
+
+# Firebase
+firebase-service-account.json
+**/firebase-service-account.json
+**/*-firebase-adminsdk-*.json
+
+# Application uploads and generated content
 /ecommerce-uploads/
-/src/main/resources/firebase-service-account.json
+/upload/
+/uploads/
+/uploaded/
+/files/
+
+# Redis
+*.rdb
+dump.rdb
+appendonly.aof
+
+# SSL certificates
+*.jks
+*.p12
+*.pem
+*.crt
+*.key
+
+src/main/resources/firebase-service-account.json
