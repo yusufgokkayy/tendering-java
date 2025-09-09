@@ -21,6 +21,8 @@ public class DepositRequest {
 
     private String paymentMethod; // "CREDIT_CARD", "BANK_TRANSFER" gibi
 
+    private String paymentMethodId; // CreditCard veya BankAccount publicId
+
     private String referenceId; // Ödeme sağlayıcısı referans numarası
 
     private String description;

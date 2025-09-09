@@ -46,6 +46,9 @@ public class Transaction {
     @Column(name = "reference_id")
     private String referenceId;
 
+    @Column(name = "escrow_id")
+    private String escrowId; // Escrow ile ilişkilendirme için
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransactionStatus status;
@@ -68,13 +71,18 @@ public class Transaction {
     }
 
     public enum TransactionType {
-        DEPOSIT,
-        WITHDRAWAL,
-        PAYMENT,
-        REFUND,
-        TRANSFER_IN,
-        TRANSFER_OUT,
-        ADJUSTMENT
+        DEPOSIT,            // Para yatırma
+        WITHDRAWAL,         // Para çekme
+        PAYMENT,           // Genel ödeme
+        REFUND,            // İade
+        TRANSFER_IN,       // Transfer gelen
+        TRANSFER_OUT,      // Transfer giden
+        ADJUSTMENT,        // Düzeltme
+        BID_PAYMENT,       // İhale teklifi ödemesi
+        EARNINGS,          // Satıcı kazanç
+        ESCROW_HOLD,       // Escrow tutma
+        ESCROW_RELEASE,    // Escrow serbest bırakma
+        COMMISSION_FEE     // Komisyon ücreti
     }
 
     public enum TransactionStatus {

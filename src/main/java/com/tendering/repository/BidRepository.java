@@ -13,9 +13,12 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface BidRepository extends JpaRepository<Bid, Long> {
+
+    Optional<Bid> findByPublicId(UUID publicId);
 
     List<Bid> findByAuctionOrderByAmountDesc(Auction auction);
 
