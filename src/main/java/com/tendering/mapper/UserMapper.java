@@ -1,6 +1,6 @@
 package com.tendering.mapper;
 
-import com.tendering.dto.UserResponseDTO;
+import com.tendering.dto.response.user.UserResponseDTO;
 import com.tendering.model.User;
 import org.springframework.stereotype.Component;
 

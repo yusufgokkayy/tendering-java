@@ -1,6 +1,6 @@
 package com.tendering.controller;
 
-import com.tendering.dto.ApiResponse;
+import com.tendering.dto.common.ApiResponse;
 import com.tendering.service.LogoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

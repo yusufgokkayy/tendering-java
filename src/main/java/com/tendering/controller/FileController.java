@@ -1,8 +1,8 @@
 package com.tendering.controller;
 
 import com.tendering.config.FileUploadConfig;
-import com.tendering.dto.ApiResponse;
-import com.tendering.dto.UserResponseDTO;
+import com.tendering.dto.common.ApiResponse;
+import com.tendering.dto.response.user.UserResponseDTO;
 import com.tendering.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

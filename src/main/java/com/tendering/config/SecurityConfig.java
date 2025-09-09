@@ -30,6 +30,15 @@ public class SecurityConfig {
                         .requestMatchers("/static/**").permitAll()
                         .requestMatchers("/*.html").permitAll()
                         .requestMatchers("/reset-password.html").permitAll()
+                        // SecurityConfig sınıfınıza endpoint bazlı yetkilendirme ekleyin
+                        .requestMatchers("/api/products/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/auctions/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/bids/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/addresses/**").permitAll()
+                        .requestMatchers("/api/wallets/**").permitAll()
+
+
                         // ✅ CSS, JS, images için
                         .requestMatchers("/*.css", "/*.js", "/*.png", "/*.jpg", "/*.ico").permitAll()
                         .anyRequest().authenticated()

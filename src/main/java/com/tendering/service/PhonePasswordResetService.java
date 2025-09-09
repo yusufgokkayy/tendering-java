@@ -1,6 +1,6 @@
 package com.tendering.service;
 
-import com.tendering.dto.ApiResponse;
+import com.tendering.dto.common.ApiResponse;
 import com.tendering.model.User;
 import com.tendering.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

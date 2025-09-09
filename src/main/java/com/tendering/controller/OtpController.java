@@ -1,7 +1,7 @@
 package com.tendering.controller;
 
-import com.tendering.dto.SendOtpRequest;
-import com.tendering.dto.VerifyOtpRequest;
+import com.tendering.dto.request.auth.verification.SendOtpRequest;
+import com.tendering.dto.request.auth.verification.VerifyOtpRequest;
 import com.tendering.service.OtpService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

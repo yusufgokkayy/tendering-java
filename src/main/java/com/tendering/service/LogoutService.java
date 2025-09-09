@@ -1,6 +1,6 @@
 package com.tendering.service;
 
-import com.tendering.dto.ApiResponse;
+import com.tendering.dto.common.ApiResponse;
 import com.tendering.model.InvalidatedToken;
 import com.tendering.repository.InvalidatedTokenRepository;
 import com.tendering.security.jwt.JwtUtil;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 public class LogoutService {

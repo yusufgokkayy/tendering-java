@@ -1,7 +1,7 @@
 package com.tendering.service;
 
-import com.tendering.dto.ApiResponse;
-import com.tendering.dto.TokenResponse;
+import com.tendering.dto.common.ApiResponse;
+import com.tendering.dto.common.TokenResponse;
 import com.tendering.exceptionHandlers.InvalidTokenException;
 import com.tendering.model.RefreshToken;
 import com.tendering.model.User;

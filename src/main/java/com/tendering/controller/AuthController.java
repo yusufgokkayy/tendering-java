@@ -1,11 +1,19 @@
 package com.tendering.controller;
 
-import com.tendering.dto.*; // Bütün DTO'ları import et
+import com.tendering.dto.request.auth.login.LoginByPhoneRequest;
+import com.tendering.dto.request.auth.register.PreRegisterRequest;
+import com.tendering.dto.request.auth.verification.PhoneVerificationRequest;
+import com.tendering.dto.request.auth.verification.VerifyOtpRequest;
+import com.tendering.dto.common.ApiResponse;
+import com.tendering.dto.common.SimpleApiResponse;
+import com.tendering.dto.common.TokenResponse;
+import com.tendering.dto.request.auth.verification.VerifyPhoneRequest;
+import com.tendering.dto.response.auth.TokenWithUserResponse;
 import com.tendering.exceptionHandlers.InvalidTokenException;
 import com.tendering.service.PhonePasswordResetService;
-import com.tendering.dto.ForgotPasswordByPhoneRequest;
-import com.tendering.dto.VerifyOtpForPasswordResetRequest;
-import com.tendering.dto.ResetPasswordByPhoneRequest;
+import com.tendering.dto.request.auth.password.ForgotPasswordByPhoneRequest;
+import com.tendering.dto.request.auth.password.VerifyOtpForPasswordResetRequest;
+import com.tendering.dto.request.auth.password.ResetPasswordByPhoneRequest;
 import com.tendering.service.AuthService;
 import com.tendering.service.OtpService;
 import jakarta.validation.Valid;
