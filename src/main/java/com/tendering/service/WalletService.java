@@ -11,9 +11,13 @@ import com.tendering.exceptionHandlers.WalletLockedException;
 import com.tendering.model.Transaction;
 import com.tendering.model.User;
 import com.tendering.model.Wallet;
+import com.tendering.model.BankAccount;
+import com.tendering.model.CreditCard;
 import com.tendering.repository.TransactionRepository;
 import com.tendering.repository.UserRepository;
 import com.tendering.repository.WalletRepository;
+import com.tendering.repository.BankAccountRepository;
+import com.tendering.repository.CreditCardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,6 +40,8 @@ public class WalletService {
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final CreditCardRepository creditCardRepository;
 
     public WalletDTO getWalletInfo(UUID userPublicId) {
         log.debug("Cüzdan bilgileri getiriliyor: {}", userPublicId);
@@ -53,6 +59,9 @@ public class WalletService {
         if (Boolean.TRUE.equals(wallet.getIsLocked())) {
             throw new WalletLockedException("Cüzdan kilitli: " + wallet.getLockReason());
         }
+
+        // Ödeme yöntemi kontrolü
+        validatePaymentMethod(wallet.getUser(), request);
 
         // Önceki bakiye kaydet
         BigDecimal previousBalance = wallet.getBalance();
@@ -98,6 +107,9 @@ public class WalletService {
         if (wallet.getBalance().compareTo(request.getAmount()) < 0) {
             throw new InsufficientFundsException("Yetersiz bakiye. Mevcut bakiye: " + wallet.getBalance());
         }
+
+        // Banka hesabı kontrolü
+        validateBankAccountForWithdrawal(wallet.getUser(), request.getBankAccountId());
 
         // Önceki bakiye kaydet
         BigDecimal previousBalance = wallet.getBalance();
@@ -184,9 +196,54 @@ public class WalletService {
                 .currentBalance(transaction.getCurrentBalance())
                 .description(transaction.getDescription())
                 .referenceId(transaction.getReferenceId())
+                .escrowId(transaction.getEscrowId())
                 .status(transaction.getStatus().name())
                 .createdAt(transaction.getCreatedAt())
                 .completedAt(transaction.getCompletedAt())
                 .build();
+    }
+
+    private void validatePaymentMethod(User user, DepositRequest request) {
+        if (request.getPaymentMethodId() == null) {
+            return; // Ödeme yöntemi ID'si yoksa atlat
+        }
+
+        if ("CREDIT_CARD".equals(request.getPaymentMethod())) {
+            UUID cardId = UUID.fromString(request.getPaymentMethodId());
+            CreditCard card = creditCardRepository.findByUserAndPublicId(user, cardId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Kredi kartı bulunamadı"));
+            
+            if (!Boolean.TRUE.equals(card.getIsActive())) {
+                throw new IllegalStateException("Kredi kartı aktif değil");
+            }
+        } else if ("BANK_TRANSFER".equals(request.getPaymentMethod())) {
+            UUID accountId = UUID.fromString(request.getPaymentMethodId());
+            BankAccount account = bankAccountRepository.findByUserAndPublicId(user, accountId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Banka hesabı bulunamadı"));
+            
+            if (!Boolean.TRUE.equals(account.getIsActive())) {
+                throw new IllegalStateException("Banka hesabı aktif değil");
+            }
+        }
+    }
+
+    private void validateBankAccountForWithdrawal(User user, String bankAccountId) {
+        if (bankAccountId == null) {
+            // Varsayılan banka hesabını bul
+            bankAccountRepository.findByUserAndIsDefaultTrueAndIsActiveTrue(user)
+                    .orElseThrow(() -> new ResourceNotFoundException("Varsayılan banka hesabı bulunamadı"));
+        } else {
+            UUID accountId = UUID.fromString(bankAccountId);
+            BankAccount account = bankAccountRepository.findByUserAndPublicId(user, accountId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Banka hesabı bulunamadı"));
+            
+            if (!Boolean.TRUE.equals(account.getIsActive())) {
+                throw new IllegalStateException("Banka hesabı aktif değil");
+            }
+            
+            if (!Boolean.TRUE.equals(account.getIsVerified())) {
+                throw new IllegalStateException("Banka hesabı doğrulanmamış");
+            }
+        }
     }
 }

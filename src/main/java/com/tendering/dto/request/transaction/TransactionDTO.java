@@ -23,6 +23,7 @@ public class TransactionDTO {
     private BigDecimal currentBalance;
     private String description;
     private String referenceId;
+    private String escrowId;
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime completedAt;
