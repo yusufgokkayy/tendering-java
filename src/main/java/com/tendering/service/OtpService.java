@@ -25,9 +25,6 @@ public class OtpService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
-    private SmsService smsService;
-
     public void sendOtp(String phoneNumber) {
         // Rate limiting kontrolü
         if (isRateLimited(phoneNumber)) {
@@ -43,9 +40,6 @@ public class OtpService {
 
         // Rate limiting için kayıt
         redisTemplate.opsForValue().set(rateLimitKey, LocalDateTime.now().toString(), RATE_LIMIT_MINUTES, TimeUnit.MINUTES);
-
-        // SMS gönder
-        smsService.sendOtp(phoneNumber, otpCode);
 
         log.info("OTP gönderildi: {} - Kod: {}", phoneNumber, otpCode);
 

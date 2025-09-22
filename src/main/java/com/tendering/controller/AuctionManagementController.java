@@ -3,7 +3,7 @@ package com.tendering.controller;
 import com.tendering.dto.common.ApiResponse;
 import com.tendering.dto.response.escrow.EscrowResponse;
 import com.tendering.model.Bid;
-import com.tendering.service.AuctionIntegrationService;
+import com.tendering.service.AuctionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 public class AuctionManagementController {
 
-    private final AuctionIntegrationService auctionIntegrationService;
+    private final AuctionService auctionService;
 
     @PostMapping("/{auctionId}/complete-with-escrow")
     public ResponseEntity<ApiResponse<EscrowResponse>> completeAuctionWithEscrow(
@@ -27,7 +27,7 @@ public class AuctionManagementController {
             @RequestParam(defaultValue = "0.05") BigDecimal commissionRate) {
         try {
             UUID auctionPublicId = UUID.fromString(auctionId);
-            EscrowResponse escrow = auctionIntegrationService.completeAuctionWithEscrow(
+            EscrowResponse escrow = auctionService.completeAuctionWithEscrow(
                     auctionPublicId, commissionRate);
 
             return ResponseEntity.ok(ApiResponse.success("İhale başarıyla tamamlandı ve ödeme escrow'a alındı", escrow));
@@ -43,7 +43,7 @@ public class AuctionManagementController {
             @PathVariable String auctionId) {
         try {
             UUID auctionPublicId = UUID.fromString(auctionId);
-            auctionIntegrationService.completeAuctionWithoutEscrow(auctionPublicId);
+            auctionService.completeAuctionWithoutEscrow(auctionPublicId);
 
             return ResponseEntity.ok(ApiResponse.success("İhale başarıyla tamamlandı", null));
         } catch (Exception e) {
@@ -59,7 +59,7 @@ public class AuctionManagementController {
             @RequestParam String reason) {
         try {
             UUID auctionPublicId = UUID.fromString(auctionId);
-            auctionIntegrationService.cancelAuction(auctionPublicId, reason);
+            auctionService.cancelAuction(auctionPublicId, reason);
 
             return ResponseEntity.ok(ApiResponse.success("İhale başarıyla iptal edildi", null));
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class AuctionManagementController {
             @PathVariable String auctionId) {
         try {
             UUID auctionPublicId = UUID.fromString(auctionId);
-            Bid winningBid = auctionIntegrationService.getWinningBid(auctionPublicId);
+            Bid winningBid = auctionService.getWinningBid(auctionPublicId);
 
             if (winningBid == null) {
                 return ResponseEntity.ok(ApiResponse.success("İhale için kazanan teklif bulunamadı", null));

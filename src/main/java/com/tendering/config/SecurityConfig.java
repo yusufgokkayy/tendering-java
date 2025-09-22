@@ -31,12 +31,15 @@ public class SecurityConfig {
                         .requestMatchers("/*.html").permitAll()
                         .requestMatchers("/reset-password.html").permitAll()
                         // SecurityConfig sınıfınıza endpoint bazlı yetkilendirme ekleyin
-                        .requestMatchers("/api/products/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/products/**").permitAll()
                         .requestMatchers("/api/auctions/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/bids/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/addresses/**").permitAll()
                         .requestMatchers("/api/wallets/**").permitAll()
+                        .requestMatchers("/api/payment/bank-accounts/**").permitAll()
+                        .requestMatchers("/api/payment/credit-cards/**").permitAll()
+                        .requestMatchers("/api/escrow/**").permitAll()
 
 
                         // ✅ CSS, JS, images için

@@ -24,7 +24,6 @@ public class PhonePasswordResetService {
 
     private final UserRepository userRepository;
     private final OtpService otpService;
-    private final SmsService smsService;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
 

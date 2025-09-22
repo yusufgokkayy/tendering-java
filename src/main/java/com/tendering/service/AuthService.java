@@ -10,7 +10,7 @@ import com.tendering.dto.common.TokenResponse;
 import com.tendering.dto.response.auth.TokenWithUserResponse;
 import com.tendering.model.User;
 import com.tendering.repository.UserRepository;
-import com.tendering.security.jwt.JwtUtil;
+import com.tendering.security.JwtUtil;
 import com.tendering.mapper.UserMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;

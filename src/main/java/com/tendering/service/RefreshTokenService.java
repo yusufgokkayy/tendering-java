@@ -6,7 +6,7 @@ import com.tendering.exceptionHandlers.InvalidTokenException;
 import com.tendering.model.RefreshToken;
 import com.tendering.model.User;
 import com.tendering.repository.RefreshTokenRepository;
-import com.tendering.security.jwt.JwtUtil;
+import com.tendering.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -19,7 +19,10 @@ public class BankAccountCreateRequest {
     private String accountHolderName;
 
     @NotBlank(message = "IBAN gereklidir")
-    @Pattern(regexp = "^TR\\d{2}\\d{4}\\d{1}\\d{16}$", message = "Geçerli bir TR IBAN giriniz")
+    @Pattern(
+            regexp = "^TR\\d{24}$",
+            message = "Geçerli bir TR IBAN giriniz"
+    )
     private String iban;
 
     @NotBlank(message = "Banka adı gereklidir")

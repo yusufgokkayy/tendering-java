@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class AuctionIntegrationService {
+public class AuctionService {
 
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;

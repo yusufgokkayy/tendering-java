@@ -111,7 +111,7 @@ public class EscrowController {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
-            Claims claims = Jwts.parser()
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor("9zcXacDJZLq9w7ifeZN7sCBKwfiTmpzzypHXTI6EkpFCPrd9daBy1eWCGRmiWWUHn3Ec/YFhgppxA7s9WtKb7w==".getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseClaimsJws(token)

@@ -21,6 +21,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Public ID ile arama (API için)
     Optional<User> findByPublicId(UUID publicId);
 
-    // Firebase UID ile arama
-    Optional<User> findByFirebaseUid(String firebaseUid);
 }
