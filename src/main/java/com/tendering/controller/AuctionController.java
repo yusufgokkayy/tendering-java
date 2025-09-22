@@ -176,9 +176,10 @@ public class AuctionController {
     }
 
     // Helper method to extract user public ID from UserDetails
-    // This should be implemented based on your authentication system
     private UUID extractUserPublicId(UserDetails userDetails) {
-        // This is a placeholder - implement based on your User entity and authentication
-        throw new UnsupportedOperationException("User public ID extraction not implemented yet");
+        if (userDetails == null) {
+            throw new RuntimeException("User is not authenticated!");
+        }
+        return UUID.fromString(userDetails.getUsername());
     }
 }

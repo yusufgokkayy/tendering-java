@@ -9,6 +9,7 @@ import com.tendering.model.User;
 import com.tendering.repository.AuctionRepository;
 import com.tendering.repository.UserRepository;
 import com.tendering.service.AuctionCrudService;
+import com.tendering.util.AuctionValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ public class AuctionCrudServiceImpl implements AuctionCrudService {
 
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
+    private final AuctionValidationUtil auctionValidationUtil;
 
     @Override
     public AuctionResponse createAuction(AuctionCreateRequest request, UUID sellerPublicId) {
@@ -38,9 +40,9 @@ public class AuctionCrudServiceImpl implements AuctionCrudService {
         User seller = userRepository.findByPublicId(sellerPublicId)
                 .orElseThrow(() -> new ResourceNotFoundException("Satıcı bulunamadı: " + sellerPublicId));
 
-        // Validate end time is after start time
-        if (request.getEndTime().isBefore(request.getStartTime())) {
-            throw new IllegalArgumentException("Bitiş zamanı başlangıç zamanından sonra olmalıdır");
+        // Validate end time is after start time using utility
+        if (!auctionValidationUtil.isValidAuctionTiming(request.getStartTime(), request.getEndTime())) {
+            throw new IllegalArgumentException("Bitiş zamanı başlangıç zamanından sonra olmalıdır ve gelecekte olmalıdır");
         }
 
         // Create auction
@@ -74,9 +76,9 @@ public class AuctionCrudServiceImpl implements AuctionCrudService {
         Auction auction = auctionRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new ResourceNotFoundException("İhale bulunamadı: " + publicId));
 
-        // Check if auction can be updated (not started yet or in PENDING status)
-        if ("ACTIVE".equals(auction.getStatus()) && auction.getStartTime().isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("Başlamış ihale güncellenemez");
+        // Check if auction can be updated using utility
+        if (!auctionValidationUtil.canModifyAuction(auction)) {
+            throw new IllegalStateException("Başlamış veya teklifli ihale güncellenemez");
         }
 
         // Update fields if provided
@@ -274,8 +276,8 @@ public class AuctionCrudServiceImpl implements AuctionCrudService {
         Auction auction = auctionRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new ResourceNotFoundException("İhale bulunamadı: " + publicId));
 
-        // Check if auction can be deleted (not started or has no bids)
-        if ("ACTIVE".equals(auction.getStatus()) && !auction.getBids().isEmpty()) {
+        // Check if auction can be deleted using utility
+        if (!auctionValidationUtil.canDeleteAuction(auction)) {
             throw new IllegalStateException("Aktif ve teklifli ihale silinemez");
         }
 

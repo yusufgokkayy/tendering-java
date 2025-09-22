@@ -117,14 +117,10 @@ public class BidController {
     }
 
     // Helper method to extract user public ID from UserDetails
-    // This should be implemented based on your authentication system
     private UUID extractUserPublicId(UserDetails userDetails) {
-        // This is a placeholder - implement based on your User entity and authentication
-        // You might need to:
-        // 1. Cast UserDetails to your custom UserPrincipal class
-        // 2. Extract the public ID from there
-        // 3. Or lookup the user by username/email
-        
-        throw new UnsupportedOperationException("User public ID extraction not implemented yet");
+        if (userDetails == null) {
+            throw new RuntimeException("User is not authenticated!");
+        }
+        return UUID.fromString(userDetails.getUsername());
     }
 }

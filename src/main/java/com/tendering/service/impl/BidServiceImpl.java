@@ -10,6 +10,7 @@ import com.tendering.repository.AuctionRepository;
 import com.tendering.repository.BidRepository;
 import com.tendering.repository.UserRepository;
 import com.tendering.service.BidService;
+import com.tendering.util.AuctionValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ public class BidServiceImpl implements BidService {
     private final BidRepository bidRepository;
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
+    private final AuctionValidationUtil auctionValidationUtil;
 
     @Override
     public BidResponse createBid(BidCreateRequest request, UUID bidderPublicId) {
@@ -47,7 +49,12 @@ public class BidServiceImpl implements BidService {
         User bidder = userRepository.findByPublicId(bidderPublicId)
                 .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı: " + bidderPublicId));
 
-        // Validate bid
+        // Validate bid using utility
+        if (!auctionValidationUtil.canUserBidOnAuction(auction, bidder)) {
+            throw new IllegalStateException("Bu ihalede teklif veremezsiniz");
+        }
+
+        // Validate bid amount
         if (!canBid(request.getAuctionPublicId(), bidderPublicId, request.getAmount())) {
             throw new IllegalStateException("Bu teklifi veremezsiniz");
         }
