@@ -2,6 +2,7 @@ package com.tendering.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -11,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -35,11 +37,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auctions/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/bids/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/addresses/**").permitAll()
-                        .requestMatchers("/api/wallets/**").permitAll()
-                        .requestMatchers("/api/payment/bank-accounts/**").permitAll()
-                        .requestMatchers("/api/payment/credit-cards/**").permitAll()
-                        .requestMatchers("/api/escrow/**").permitAll()
 
 
                         // ✅ CSS, JS, images için

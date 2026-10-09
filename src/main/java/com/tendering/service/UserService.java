@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -56,7 +58,23 @@ public class UserService implements UserDetailsService { // UserDetailsService i
         User user = userRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new UsernameNotFoundException("Kullanıcı bulunamadı: " + phoneNumber));
         // Spring Security'nin User objesini döndürür. Şifre ve roller burada ayarlanır.
-        return new org.springframework.security.core.userdetails.User(user.getPhoneNumber(), user.getPassword(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(user.getPhoneNumber(), user.getPassword(), authoritiesFor(user));
+    }
+
+    /**
+     * Maps the stored role to Spring Security authorities.
+     * A standard account (USER) can both buy and sell on the marketplace,
+     * so it also receives ROLE_BUYER and ROLE_SELLER.
+     */
+    private List<SimpleGrantedAuthority> authoritiesFor(User user) {
+        String role = (user.getRole() == null || user.getRole().isBlank()) ? "USER" : user.getRole().trim().toUpperCase();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        if ("USER".equals(role)) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_BUYER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
+        }
+        return authorities;
     }
 
     /**
@@ -65,7 +83,7 @@ public class UserService implements UserDetailsService { // UserDetailsService i
     public UserDetails loadUserByPublicId(String publicId) throws UsernameNotFoundException {
         User user = userRepository.findByPublicId(UUID.fromString(publicId))
                 .orElseThrow(() -> new UsernameNotFoundException("Kullanıcı bulunamadı: " + publicId));
-        return new org.springframework.security.core.userdetails.User(user.getPhoneNumber(), user.getPassword(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(user.getPhoneNumber(), user.getPassword(), authoritiesFor(user));
     }
 
 

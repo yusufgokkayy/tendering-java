@@ -1,6 +1,6 @@
 # Teklify — Electronic Tendering Platform
 
-A production-grade backend service for real-time electronic tendering and auction management, built with Java and Spring Boot. Features live bidding via WebSockets, phone-based OTP authentication, escrow payment integration, wallet system, and comprehensive auction/product/category management.
+A production-grade backend service for real-time electronic tendering and auction management, built with Java and Spring Boot. 95 REST endpoints over 14 JPA entities, covering phone-based OTP authentication, escrow payment integration, wallet system, and comprehensive auction/product/category management.
 
 > **Background:** MVP was initially shipped with Node.js and Express to validate the core concept, then fully rebuilt with Java and Spring Boot for scalability and long-term maintainability.
 
@@ -8,7 +8,7 @@ A production-grade backend service for real-time electronic tendering and auctio
 
 ## Features
 
-- **Real-time Bidding** — WebSocket-based auction engine, load-tested to 500 concurrent connections
+- **Auction Lifecycle Engine** — Multiple auction types with status-driven lifecycle, reserve prices and bid validation
 - **Phone-based Auth** — OTP verification flow (send → verify → register/login) with JWT + refresh token support
 - **Role-Based Access Control** — `BUYER`, `SELLER`, and `ADMIN` roles with method-level security
 - **Wallet System** — Deposit, withdraw, and paginated transaction history per user
@@ -32,22 +32,21 @@ A production-grade backend service for real-time electronic tendering and auctio
 | Database | PostgreSQL |
 | ORM | Spring Data JPA / Hibernate |
 | Cache / OTP | Redis |
-| Real-time | WebSockets |
 | Auth | JWT, RBAC, OTP |
-| Deployment | Linux Server |
+| Deployment | Self-managed Linux server |
 
 ---
 
 ## Architecture
 
 ```
-Client (REST / WebSocket)
+Client (REST)
           │
           ▼
    Spring Boot Backend
    ├── Auth Layer (JWT + RBAC + OTP)
-   ├── Auction Engine (WebSocket + Lifecycle Management)
-   ├── Bid Engine (Real-time + Validation)
+   ├── Auction Engine (Lifecycle Management)
+   ├── Bid Engine (Validation + Highest-bid Tracking)
    ├── Escrow & Payment System
    ├── Wallet Service (Deposit / Withdraw / Transactions)
    ├── Product & Category Service
@@ -59,6 +58,17 @@ Client (REST / WebSocket)
           │
    Redis (OTP sessions + caching)
 ```
+
+---
+
+## Security & Money Handling
+
+- **Method-level RBAC** — `@EnableMethodSecurity` with `@PreAuthorize` on controller methods. A standard account (`USER`) holds both buyer and seller rights (`ROLE_BUYER`, `ROLE_SELLER`); `ADMIN` endpoints are separate.
+- **Authenticated money endpoints** — Wallet, escrow, payment-method and address APIs require a valid JWT.
+- **Atomic escrow settlement** — Holding, releasing and refunding funds each run inside a single `@Transactional` boundary: the wallet balance change and its ledger entry (`Transaction`) are committed together or not at all.
+- **Double-settlement guard** — An escrow can only be released or refunded while it is in the `HELD` state, so the same funds cannot be paid out twice.
+- **OTP with expiry and rate limiting** — Codes live in Redis with a TTL; repeated requests are throttled per phone number.
+- **No secrets in the repository** — All credentials are read from environment variables (see `.env.example`).
 
 ---
 
@@ -228,27 +238,27 @@ Client (REST / WebSocket)
 git clone https://github.com/yusufgokkayy/tendering-java.git
 cd tendering-java
 
-# Configure src/main/resources/application.properties
+# Provide configuration through environment variables (see .env.example)
+export DB_URL=jdbc:postgresql://localhost:5432/tendering
+export DB_USERNAME=postgres
+export DB_PASSWORD=your_password
+export JWT_SECRET=$(openssl rand -base64 64)
+
 ./mvnw spring-boot:run
 ```
 
-### Key Configuration
+| Variable | Required | Purpose |
+|---|---|---|
+| `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | yes | PostgreSQL connection |
+| `JWT_SECRET` | yes | Signing key for access and refresh tokens |
+| `MAIL_USERNAME`, `MAIL_PASSWORD` | no | SMTP account for password-reset e-mails |
+| `SMS_TEST_NUMBERS` | no | Numbers that receive a fixed OTP in test mode |
+| `FIREBASE_PROJECT_ID` | no | Firebase project for OTP delivery |
 
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/tendering_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-
-spring.data.redis.host=localhost
-spring.data.redis.port=6379
-
-jwt.secret=your_jwt_secret
-jwt.expiration=86400000
-jwt.refresh-expiration=604800000
-```
+Redis is expected on `localhost:6379`.
 
 ---
 
 ## Project Status
 
-Active development — core auction engine, bidding system, wallet, escrow, and auth are complete and deployed.
+Core auction engine, bidding, wallet, escrow and auth are implemented. The service was previously deployed on a self-managed Linux VPS and is not currently hosted.
