@@ -262,3 +262,7 @@ Redis is expected on `localhost:6379`.
 ## Project Status
 
 Core auction engine, bidding, wallet, escrow and auth are implemented. The service was previously deployed on a self-managed Linux VPS and is not currently hosted.
+
+## License
+
+All Rights Reserved. This code is published for viewing and evaluation only; see [LICENSE](LICENSE).
